@@ -1,0 +1,45 @@
+{
+  "name": "glitch-fps-game",
+  "version": "1.0.0",
+  "description": "A high-quality 3D FPS game built with HTML5, CSS3, and JavaScript using Three.js",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "dev": "npx http-server -p 8000 -o -c-1",
+    "build": "echo 'No build process required - pure HTML/CSS/JS game'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "fps",
+    "game",
+    "threejs",
+    "3d",
+    "webgl",
+    "html5",
+    "javascript",
+    "gaming",
+    "shooter",
+    "cyberpunk"
+  ],
+  "author": "GLITCH Game Developer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/glitch-fps-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/glitch-fps-game/issues"
+  },
+  "homepage": "https://github.com/yourusername/glitch-fps-game#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 

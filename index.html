@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPS Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="usernameScreen">
+        <div class="title">ENTER USERNAME</div>
+        <input id="usernameInput" type="text" maxlength="16" placeholder="Your name..." autofocus />
+        <button id="usernameButton">CONTINUE</button>
+    </div>
+    <div id="homeScreen" style="display:none;">
+        <div class="title">FPS GAME</div>
+        <button id="startButton">START GAME</button>
+        <button id="controlsButton">CONTROLS</button>
+        <button id="exitButton">EXIT</button>
+    </div>
+    
+    <div id="gameContainer" style="display: none;">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hud">
+            <div id="health">Health: 100</div>
+            <div id="ammo">Ammo: 30</div>
+            <div id="score">Score: 0</div>
+        </div>
+        <div id="crosshair">+</div>
+        <div id="killBoard" class="glitch-red"></div>
+    </div>
+
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html> 
