@@ -27,6 +27,13 @@ wss.on('connection', function connection(ws) {
             return;
         }
         if (data.type === 'join') {
+            // Check if username is already taken
+            const isUsernameTaken = players.some(player => player.username === data.username);
+            if (isUsernameTaken) {
+                ws.send(JSON.stringify({ type: 'username_taken', username: data.username }));
+                return;
+            }
+            
             username = data.username;
             players.push({ ws, username });
             // Notify all others
