@@ -63,6 +63,11 @@ function connectWebSocket() {
             playerCount = data.count;
             document.getElementById('usernameScreen').style.display = 'none';
             document.getElementById('homeScreen').style.display = 'flex';
+        } else if (data.type === 'username_taken') {
+            showKillMessage('NAME TAKEN', '');
+            // Clear the input and focus it
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('usernameInput').focus();
         } else if (data.type === 'player_joined') {
             playerCount++;
             if (playerCount === 2) {
@@ -261,7 +266,7 @@ function updateGame() {
     const forward = inputMap['KeyW'] || inputMap['ArrowUp'];
     const backward = inputMap['KeyS'] || inputMap['ArrowDown'];
     const left = inputMap['KeyA'] || inputMap['ArrowLeft'];
-    const right = inputMap['KeyD'] || inputMap['ArrowDown'];
+    const right = inputMap['KeyD'] || inputMap['ArrowRight'];
     
     if (forward) camera.moveWithCollisions(camera.getDirection(BABYLON.Axis.Z).scale(moveSpeed));
     if (backward) camera.moveWithCollisions(camera.getDirection(BABYLON.Axis.Z).scale(-moveSpeed));
