@@ -22,6 +22,9 @@ let inputMap = {};
 let mouseX = 0;
 let mouseY = 0;
 
+// Replace killBoard logic with info feed
+let infoFeedTimeouts = [];
+
 // Initialize the game
 window.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
@@ -63,6 +66,7 @@ function connectWebSocket() {
             playerCount = data.count;
             document.getElementById('usernameScreen').style.display = 'none';
             document.getElementById('homeScreen').style.display = 'flex';
+            appendInfoFeed(`You joined as ${username}`);
         } else if (data.type === 'username_taken') {
             // Show "NAME TAKEN" message in the username screen
             const usernameScreen = document.getElementById('usernameScreen');
@@ -93,20 +97,22 @@ function connectWebSocket() {
             }, 2000);
         } else if (data.type === 'player_joined') {
             playerCount++;
+            appendInfoFeed(`${data.username} joined the game!`);
             if (playerCount === 2) {
-                showKillMessage(`${data.username} joined the game!`, '');
                 hideAIs();
             }
         } else if (data.type === 'player_left') {
             playerCount--;
+            appendInfoFeed(`${data.username} left the game.`);
             if (playerCount === 1) {
-                showKillMessage('AIs have returned!', '');
+                appendInfoFeed('AIs have returned!');
                 showAIs();
             }
         }
     };
     ws.onclose = function() {
         playerCount = 1;
+        appendInfoFeed('Disconnected from server. AIs have returned!');
         showAIs();
     };
 }
@@ -131,6 +137,8 @@ function startGame() {
     playerAmmo = 30;
     score = 0;
     document.getElementById('killBoard').textContent = '';
+    infoFeedTimeouts.forEach(clearTimeout);
+    infoFeedTimeouts = [];
     if (killBoardTimeout) clearTimeout(killBoardTimeout);
     
     scene = createScene();
@@ -475,19 +483,29 @@ function respawnBot(index) {
     };
 }
 
-function showKillMessage(killer, victim) {
-    const killBoard = document.getElementById('killBoard');
-    if (victim === '') {
-        killBoard.textContent = killer;
-    } else {
-        killBoard.textContent = `${killer} killed ${victim}`;
+function appendInfoFeed(message, isKill = false) {
+    const infoFeed = document.getElementById('killBoard');
+    const entry = document.createElement('div');
+    entry.textContent = message;
+    entry.className = isKill ? 'glitch-red' : '';
+    infoFeed.appendChild(entry);
+    // Auto-remove after 8 seconds
+    const timeout = setTimeout(() => {
+        if (entry.parentNode) entry.parentNode.removeChild(entry);
+    }, 8000);
+    infoFeedTimeouts.push(timeout);
+    // Limit feed to last 8 messages
+    while (infoFeed.children.length > 8) {
+        infoFeed.removeChild(infoFeed.firstChild);
     }
-    killBoard.classList.add('glitch-red');
-    if (killBoardTimeout) clearTimeout(killBoardTimeout);
-    killBoardTimeout = setTimeout(() => {
-        killBoard.textContent = '';
-        killBoard.classList.remove('glitch-red');
-    }, 2000);
+}
+
+function showKillMessage(killer, victim) {
+    if (victim === '') {
+        appendInfoFeed(killer, false);
+    } else {
+        appendInfoFeed(`${killer} killed ${victim}`, true);
+    }
 }
 
 function updateHUD() {
