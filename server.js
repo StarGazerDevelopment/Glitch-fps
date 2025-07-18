@@ -18,6 +18,11 @@ let players = [];
 
 wss.on('connection', function connection(ws) {
     let username = null;
+    ws.isAlive = true;
+
+    ws.on('pong', function() {
+        ws.isAlive = true;
+    });
 
     ws.on('message', function incoming(message) {
         let data;
@@ -33,7 +38,6 @@ wss.on('connection', function connection(ws) {
                 ws.send(JSON.stringify({ type: 'username_taken', username: data.username }));
                 return;
             }
-            
             username = data.username;
             players.push({ ws, username });
             // Notify all others
@@ -59,6 +63,17 @@ wss.on('connection', function connection(ws) {
         }
     });
 });
+
+// Heartbeat to detect dead connections
+setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+        ws.isAlive = false;
+        ws.ping();
+    });
+    // Clean up players array for dead sockets
+    players = players.filter(p => p.ws.readyState === WebSocket.OPEN);
+}, 30000);
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
