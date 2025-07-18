@@ -64,10 +64,33 @@ function connectWebSocket() {
             document.getElementById('usernameScreen').style.display = 'none';
             document.getElementById('homeScreen').style.display = 'flex';
         } else if (data.type === 'username_taken') {
-            showKillMessage('NAME TAKEN', '');
+            // Show "NAME TAKEN" message in the username screen
+            const usernameScreen = document.getElementById('usernameScreen');
+            let nameTakenMsg = document.getElementById('nameTakenMsg');
+            if (!nameTakenMsg) {
+                nameTakenMsg = document.createElement('div');
+                nameTakenMsg.id = 'nameTakenMsg';
+                nameTakenMsg.className = 'glitch-red';
+                nameTakenMsg.style.position = 'absolute';
+                nameTakenMsg.style.top = '60%';
+                nameTakenMsg.style.left = '50%';
+                nameTakenMsg.style.transform = 'translateX(-50%)';
+                nameTakenMsg.style.fontSize = '2rem';
+                nameTakenMsg.style.fontWeight = 'bold';
+                nameTakenMsg.style.zIndex = '2001';
+                usernameScreen.appendChild(nameTakenMsg);
+            }
+            nameTakenMsg.textContent = 'NAME TAKEN';
+            nameTakenMsg.style.display = 'block';
+            
             // Clear the input and focus it
             document.getElementById('usernameInput').value = '';
             document.getElementById('usernameInput').focus();
+            
+            // Hide the message after 2 seconds
+            setTimeout(() => {
+                nameTakenMsg.style.display = 'none';
+            }, 2000);
         } else if (data.type === 'player_joined') {
             playerCount++;
             if (playerCount === 2) {
@@ -139,6 +162,11 @@ function createScene() {
     camera.checkCollisions = true;
     camera.applyGravity = true;
     camera.minZ = 0.1;
+    
+    // Disable camera mouse controls temporarily to allow keyboard input
+    camera.inputs.clear();
+    camera.inputs.add(new BABYLON.FreeCameraKeyboardMoveInput());
+    camera.inputs.add(new BABYLON.FreeCameraMouseInput());
     
     // Lighting
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
